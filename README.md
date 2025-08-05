@@ -1,5 +1,3 @@
-# NSEIS
-Minor Project
 # NeuralSense Environmental Intelligence System (NSEIS)
 
 **A** compact, IoT-based system for real-time air quality and meteorological monitoring. Using low-power sensors and **cloud analytics, it provides accurate pollutant and climate assessments for smart cities, homes, and environmental studies.**
