@@ -1,10 +1,10 @@
 # NeuralSense Environmental Intelligence System (NSEIS)
 
-![Project Banner](YOUR_BANNER_IMAGE_LINK_HERE)
+![Project Banner](https://drive.google.com/file/d/18EYG292KCIl6vR5p7rscMZPIUfQ3XR1-/view?usp=sharing)
 
 <p align="center">
   <img src="YOUR_DRIVE_LINK_TO_PROTOTYPE_IMAGE_1" width="30%" alt="Prototype Side View">
-  <img src="YOUR_DRIVE_LINK_TO_DASHBOARD_IMAGE_2" width="30%" alt="ThingSpeak Dashboard">
+  <img src="https://drive.google.com/file/d/1Q9Gj9WtWLV8TMrHCLqAZy4oBxy3G92ia/view?usp=sharing" width="30%" alt="ThingSpeak Dashboard">
   <img src="YOUR_DRIVE_LINK_TO_WIRING_IMAGE_3" width="30%" alt="Circuit Wiring">
 </p>
 
