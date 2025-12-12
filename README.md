@@ -1,199 +1,117 @@
 # NeuralSense Environmental Intelligence System (NSEIS)
 
-**A** compact, IoT-based system for real-time air quality and meteorological monitoring. Using low-power sensors and **cloud analytics, it provides accurate pollutant and climate assessments for smart cities, homes, and environmental studies.**
+![Project Banner](YOUR_BANNER_IMAGE_LINK_HERE)
+<p align="center">
+  <img src="YOUR_DRIVE_LINK_TO_PROTOTYPE_IMAGE_1" width="30%" alt="Prototype Side View">
+  <img src="YOUR_DRIVE_LINK_TO_DASHBOARD_IMAGE_2" width="30%" alt="ThingSpeak Dashboard">
+  <img src="YOUR_DRIVE_LINK_TO_WIRING_IMAGE_3" width="30%" alt="Circuit Wiring">
+</p>
+
+**A compact, IoT-based system for real-time air quality and meteorological monitoring.** Using low-power sensors and cloud analytics, NeuralSense provides accurate pollutant and climate assessments for smart cities, homes, and environmental studies.
+
+---
 
 ## 📋 Table of Contents
-
-* [Features](https://www.google.com/search?q=%23-features)
-
-* [Components Required](https://www.google.com/search?q=%23-components-required)
-
-* [Hardware Setup](https://www.google.com/search?q=%23-hardware-setup)
-
-  * [Pin Connections](https://www.google.com/search?q=%23pin-connections)
-
-  * [Wiring Diagram](https://www.google.com/search?q=%23wiring-diagram)
-
-* [Software & Libraries](https://www.google.com/search?q=%23-software--libraries)
-
-* [Cloud](https://www.google.com/search?q=%23-cloud-setup-firebase) Setup (Firebase)
-
-* [Getting Started](https://www.google.com/search?q=%23-getting-started)
-
-  * [1. Setup Arduino IDE](https://www.google.com/search?q=%231-setup-arduino-ide)
-
-  * [2. Install Libraries](https://www.google.com/search?q=%232-install-libraries)
-
-  * [3. Configure the Code](https://www.google.com/search?q=%233-configure-the-code)
-
-  * [4. Upload to NodeMCU](https://www.google.com/search?q=%234-upload-to-nodemcu)
-
-* [Future Enhancements](https://www.google.com/search?q=%23-future-enhancements)
-
-* [Contributing](https://www.google.com/search?q=%23-contributing)
-
-* [License](https://www.google.com/search?q=%23-license)
+* [Features](#-features)
+* [Components Required](#-components-required)
+* [Hardware Setup](#-hardware-setup)
+* [Software & Libraries](#-software--libraries)
+* [Cloud Setup (ThingSpeak)](#-cloud-setup-thingspeak)
+* [Getting Started](#-getting-started)
+* [Future Enhancements](#-future-enhancements)
+* [Contributing](#-contributing)
+* [License](#-license)
 
 ## ✨ Features
-
-* **Real-Time Monitoring**: Measures Temperature, Humidity, and Air Quality (VOCs, smoke, CO2).
-
-* **Wi-Fi Enabled**: Uses the ESP8266 to send data wirelessly to the cloud.
-
-* **Cloud Integration**: Seamlessly connects to cloud platforms like Firebase or Thingspeak for data storage and analysis.
-
-* **Data Visualization**: Data can be viewed on web and mobile dashboards.
-
-* **Low Power & Compact**: Ideal for deployment in various indoor and outdoor environments.
-
-* **Extensible**: Easily add more sensors or integrate with other systems.
+* **Real-Time Monitoring**: Measures Temperature, Humidity, and Air Quality (VOCs, smoke, CO2) simultaneously.
+* **Wi-Fi Enabled**: Uses the ESP8266 NodeMCU to transmit data wirelessly.
+* **Cloud Integration**: Seamlessly connects to **ThingSpeak** for instant data storage and visualization.
+* **Zero-Config Dashboard**: Live graphs and historical data analysis are available immediately via the ThingSpeak platform without complex coding.
+* **Low Power & Compact**: Optimized code ensures efficient operation suitable for continuous monitoring.
 
 ## 🛠️ Components Required
-
 | Component | Purpose | 
-| ----- | ----- | 
-| NodeMCU ESP8266 V3 (LUA CH340) | Wi-Fi enabled microcontroller | 
-| MQ-135 Gas Sensor Module | Detects air pollutants (VOCs, Smoke) | 
-| DHT11 Temperature & Humidity Sensor | Measures temperature and humidity | 
-| Breadboard | For creating the circuit | 
-| Jumper Wires | To connect the components | 
-| Micro-USB Cable | To power and program the NodeMCU | 
+| :--- | :--- | 
+| **NodeMCU ESP8266 V3** | Wi-Fi enabled microcontroller brain | 
+| **MQ-135 Gas Sensor** | Detects air pollutants (VOCs, CO2, Smoke) | 
+| **DHT11 Sensor** | Measures ambient temperature and humidity | 
+| **Breadboard & Wires** | For prototyping and connections | 
+| **Micro-USB Cable** | Power supply and programming interface | 
 
 ## 🔌 Hardware Setup
 
 ### Pin Connections
+Connect the components according to the table below.
 
-Connect the components according to the table below. It's recommended to use a breadboard to keep the connections stable.
-
-| Sensor | Sensor Pin | NodeMCU ESP8266 Pin | 
-| ----- | ----- | ----- | 
-| **DHT11** (Temp/Humidity) | VCC / `+` | `3V3` | 
-|  | GND / `-` | `GND` | 
-|  | DATA / OUT | `D4` (GPIO2) | 
-| **MQ-135** (Air Quality) | VCC | `3V3` | 
-|  | GND | `GND` | 
-|  | `AOUT` | `A0` | 
-
-### Wiring Diagram
-
-This visual diagram shows the complete circuit layout on a breadboard.
+| Sensor | Sensor Pin | NodeMCU Pin | Notes |
+| :--- | :--- | :--- | :--- |
+| **DHT11** | VCC (+) | `3V3` | |
+| | GND (-) | `GND` | |
+| | DATA | `D2` (GPIO4) | |
+| **MQ-135** | VCC | `3V3` | Needs warm-up time |
+| | GND | `GND` | |
+| | AOUT | `A0` | Analog reading |
 
 ## 💻 Software & Libraries
 
-### Software
-
-* [**Arduino IDE**](https://www.arduino.cc/en/software): The development environment used to program the NodeMCU.
-
 ### Arduino Libraries
-
-You will need to install the following libraries through the Arduino IDE's Library Manager (`Sketch` > `Include Library` > `Manage Libraries...`):
-
-1. **DHT** sensor **library** by Adafruit
-
+Install these via the Arduino Library Manager (`Sketch` > `Include Library` > `Manage Libraries...`):
+1. **DHT sensor library** by Adafruit
 2. **Adafruit Unified Sensor** by Adafruit
+3. **ThingSpeak** by MathWorks
+4. **MQ135** by GeorgK (Optional helper library)
 
-3. **Firebase ESP8266 Client** by Mobizt (if using Firebase)
+## ☁️ Cloud Setup (ThingSpeak)
 
-4. **ThingSpeak** by MathWorks (if using ThingSpeak)
+We selected **ThingSpeak** for this project because of its **ease of use**. Unlike other platforms that require complex database setup and frontend coding, ThingSpeak offers pre-built visualization tools and MATLAB integration out of the box.
 
-## ☁️ Cloud Setup (Firebase)
+**Steps to Configure:**
 
-This guide uses Firebase as the cloud backend.
-
-1. **Create a Firebase Project**: Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
-
-2. **Create a Realtime Database**:
-
-   * In your project, go to `Build` > `Realtime Database`.
-
-   * Click `Create Database` and start in **test mode** (this allows read/write access without authentication for development).
-
-   * **Important**: For production, you should set up proper security rules.
-
-3. **Get Credentials**:
-
-   * Find your **Database** URL on the Realtime Database dashboard. It will look like `https://your-project-name-default-rtdb.firebaseio.com/`.
-
-   * Go to `Project settings` (gear icon) > `Service accounts`.
-
-   * Click `Database secrets` and copy your **Database** secret (legacy **token)**.
+1.  **Create Account**: Sign up at [ThingSpeak.com](https://thingspeak.com/).
+2.  **New Channel**:
+    * Click **Channels** > **My Channels** > **New Channel**.
+    * Name it: `NeuralSense Environment`.
+    * Enable **Field 1**, **Field 2**, and **Field 3**.
+    * Label them: `Temperature`, `Humidity`, `Air Quality`.
+3.  **Get Credentials**:
+    * Go to the **API Keys** tab.
+    * Copy the **Write API Key**.
+    * Copy the **Channel ID**.
 
 ## 🚀 Getting Started
 
-### 1. Setup Arduino IDE
+1.  **Setup Arduino IDE**:
+    * Add ESP8266 URL to Preferences: `http://arduino.esp8266.com/stable/package_esp8266com_index.json`
+    * Install "ESP8266" via Boards Manager.
+    * Select Board: `NodeMCU 1.0 (ESP-12E Module)`.
 
-* Open Arduino IDE.
+2.  **Configure Code**:
+    * Open the project `.ino` file.
+    * Edit the `CONFIGURATION` section at the top:
+    ```cpp
+    const char* WIFI_SSID = "YOUR_WIFI_NAME";
+    const char* WIFI_PASSWORD = ""; // Leave empty for open networks
+    
+    unsigned long CHANNEL_ID = 1234567; // Your ThingSpeak Channel ID
+    const char* WRITE_API_KEY = "XYZ123..."; // Your Write API Key
+    ```
 
-* Go to `File` > `Preferences`.
+3.  **Upload**:
+    * Connect NodeMCU via USB.
+    * Select correct COM Port.
+    * Click **Upload**.
 
-* Add the following URL to the `Additional Boards Manager URLs` field:
-
-  ```
-  [http://arduino.esp8266.com/stable/package_esp8266com_index.json](http://arduino.esp8266.com/stable/package_esp8266com_index.json)
-  
-  ```
-
-* Go to `Tools` > `Board` > `Boards Manager...`, search for `esp8266`, and install the package.
-
-* Select your board: `Tools` > `Board` > `NodeMCU 1.0 (ESP-12E Module)`.
-
-### 2. Install Libraries
-
-* Open the Library Manager (`Sketch` > `Include Library` > `Manage Libraries...`).
-
-* Search for and install the libraries listed in the [Software & Libraries](https://www.google.com/search?q=%23-software--libraries) section.
-
-### 3. Configure the Code
-
-* Copy the Arduino code from the `src/` directory of this repository (or create a new sketch).
-
-* Update the following placeholder values in the code with your credentials:
-
-```
-// Wi-Fi Credentials
-#define WIFI_SSID "YOUR_WIFI_SSID"
-#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
-
-// Firebase Credentials
-#define FIREBASE_HOST "YOUR_FIREBASE_PROJECT_URL" // without "https://"
-#define FIREBASE_AUTH "YOUR_FIREBASE_DATABASE_SECRET"
-
-```
-
-### 4. Upload to NodeMCU
-
-* Connect your NodeMCU to your computer via a micro-USB cable.
-
-* Select the correct COM port under `Tools` > `Port`.
-
-* Click the `Upload` button in the Arduino IDE. The code will be compiled and flashed to the device.
-
-* Open the `Serial Monitor` (`Tools` > `Serial Monitor`) with a baud rate of `115200` to see a sensor readings and status messages.
+4.  **Monitor**:
+    * Open Serial Monitor at **115200 baud**.
+    * Wait for the "WiFi Connected" and "ThingSpeak update successful" messages.
 
 ## 🔮 Future Enhancements
-
-* **Machine Learning**: Implement a TensorFlow Lite model on-device (TinyML) or in the cloud to predict air quality trends and detect anomalies.
-
-* **Custom Dashboard**: Build a web dashboard using React or Vue.js to visualize data with custom charts and alerts.
-
-* **More Sensors**: Integrate additional sensors like a dust sensor (PM2.5), UV sensor, or a barometer.
-
-* **Mobile App**: Create a mobile application with Flutter or React Native for push notifications and on-the-go monitoring.
+* **TinyML Integration**: Implement on-device logic to categorize air quality ("Good", "Hazardous") before uploading.
+* **Mobile Alerts**: Use ThingSpeak's "React" feature to send tweets or emails if gas levels spike.
+* **OLED Display**: Add a 0.96" OLED screen to show real-time readings locally.
 
 ## 🤝 Contributing
-
-Contributions are welcome! If you have ideas for improvements or find any issues, please open an issue or submit a pull request.
-
-1. Fork the Project.
-
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-
-4. Push to the Branch (`git` push origin` feature/AmazingFeature`).
-
-5. Open a Pull Request.
+Contributions are welcome! Please fork the repository and submit a Pull Request.
 
 ## 📄 License
-
-This project is licensed under the **MIT License**. See the `LICENSE` file for more details.
+This project is licensed under the **MIT License**.
