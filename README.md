@@ -97,8 +97,6 @@ NeuralSense is not just about monitoring; it's about **predicting**. We have inc
 
 Use`model.ipynb` in your project folder. Ensure you have `jammu_data.csv` (or your sensor data CSV) in the same directory.
 
-\</details\>
-
 ## 🚀 Getting Started
 
 1.  **Setup Arduino IDE**:
