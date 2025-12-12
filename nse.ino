@@ -9,9 +9,9 @@
 const char* WIFI_SSID = "YOUR_WIFI_SSID";
 const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 
-unsigned long CHANNEL_ID = 3024176;
+unsigned long CHANNEL_ID = THINKSPEAK_CHANNEL_ID;
 // ACTION: CHECK THIS KEY! It must be 16 characters. Yours was 15.
-const char* WRITE_API_KEY = "CXT1GFCI7AU01BWS"; 
+const char* WRITE_API_KEY = "THINKSPEAK_WRITE_API_KEY"; 
 
 #define DHT_PIN 4      // D2 (GPIO4)
 #define MQ135_PIN A0   // Analog Pin
