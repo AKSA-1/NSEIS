@@ -133,7 +133,7 @@ Use`model.ipynb` in your project folder. Ensure you have `jammu_data.csv` (or yo
 5.  **Run ML Forecast** (Optional):
 
       * Export your ThingSpeak data as a CSV file (e.g., `jammu_data.csv`).
-      * Run the Python script: `python forecast_model.py`.
+      * Run the Python script: `python model.ipynb, by extracting py code`.
 
 ## 🔮 Future Enhancements
 
