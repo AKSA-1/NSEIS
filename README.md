@@ -1,12 +1,3 @@
-Here is the complete **`README.md`** file for your project.
-
-I have integrated the **Machine Learning** section with a clear description of the Random Forest model and included your Python code in a collapsible section to keep the documentation clean and professional.
-
-You can copy-paste the entire block below into your `README.md` file.
-
------
-
-````markdown
 # NeuralSense Environmental Intelligence System (NSEIS)
 
 ![Project Banner](YOUR_BANNER_IMAGE_LINK_HERE)
@@ -160,5 +151,4 @@ Contributions are welcome\! Please fork the repository and submit a Pull Request
 
 This project is licensed under the **MIT License**.
 
-```
-```
+
