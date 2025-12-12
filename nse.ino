@@ -1,234 +1,113 @@
-
-// 1. LIBRARY INCLUSION
+// NeuralSense Environmental Intelligence System - FIXED VERSION
 
 #include <ESP8266WiFi.h>
-
 #include "ThingSpeak.h"
-
 #include "DHT.h"
-
 #include "MQ135.h"
 
+// --- 1. CONFIGURATION ---
+const char* WIFI_SSID = "YOUR_WIFI_SSID";
+const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 
+unsigned long CHANNEL_ID = 3024176;
+// ACTION: CHECK THIS KEY! It must be 16 characters. Yours was 15.
+const char* WRITE_API_KEY = "CXT1GFCI7AU01BWS"; 
 
-// 2. CONSTANTS AND PIN DEFINITIONS
+#define DHT_PIN 4      // D2 (GPIO4)
+#define MQ135_PIN A0   // Analog Pin
 
-// -- WiFi and ThingSpeak Credentials
+#define DHT_TYPE DHT11
 
-const char* WIFI_SSID = "YOUR WIFI NAME";
-
-const char* WIFI_PASSWORD = "YOUR WIFI PASSWORD";
-
-unsigned long CHANNEL_ID = THINGSPEAK_CHANNEL_ID; // Replace with your ThingSpeak Channel ID
-
-const char* WRITE_API_KEY = "THINGSPEAK_WRITE_KEY"; // Replace with your ThingSpeak Write API Key
-
-
-
-// -- Sensor Pin Assignments
-
-#define DHT_PIN 4 // D2 on NodeMCU (GPIO4)
-
-#define MQ135_PIN A0 // A0 on NodeMCU
-
-
-
-// -- Sensor Type Definition
-
-#define DHT_TYPE DHT11 // Using a DHT11 sensor
-
-
-
-// -- MQ135 Calibration Constant
-
-// IMPORTANT: This value MUST be found by running a calibration sketch
-
-// after a 24-48 hour burn-in period in clean, fresh air.
-
-const float RZERO = 76.63; // Replace with YOUR calibrated RZERO value
-
-
-
-// -- Timing Control
-
-const long UPLOAD_INTERVAL = 30000; // Upload data every 30 seconds (30000 ms)
-
-unsigned long lastUploadTime = 0;
-
-
-
-// 3. OBJECT INSTANTIATION
-
+// --- 2. SENSOR OBJECTS ---
 WiFiClient client;
-
 DHT dht(DHT_PIN, DHT_TYPE);
-
 MQ135 gasSensor = MQ135(MQ135_PIN);
 
-
-
-// --- FUNCTION PROTOTYPES ---
-
-void connectToWiFi();
-
-
+// Timing variables
+const long UPLOAD_INTERVAL = 30000; 
+unsigned long lastUploadTime = 0;
 
 void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  
+  WiFi.mode(WIFI_STA);
+  ThingSpeak.begin(client);
 
-// 4. INITIALIZATION
+  Serial.println("\n\n[System] Starting NeuralSense...");
+  
+  // Connect to WiFi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\n[Success] WiFi Connected. IP: " + WiFi.localIP().toString());
 
-Serial.begin(115200); // Start serial communication for debugging
-
-
-dht.begin(); // Initialize the DHT sensor
-
-
-WiFi.mode(WIFI_STA); // Set ESP8266 to Wi-Fi station mode
-
-ThingSpeak.begin(client); // Initialize ThingSpeak client
-
-
-
-Serial.println("System Initialized. Connecting to WiFi...");
-
-connectToWiFi();
-
+  // --- MQ135 CALIBRATION HELP ---
+  // The sensor needs to 'burn in' (heat up) for at least 60 seconds before reliable reading
+  Serial.println("[Sensor] Warming up MQ135 (Please wait 20s)...");
+  delay(20000); 
+  
+  // This prints the RZero value you need to copy-paste into your library file or code
+  float rzero = gasSensor.getRZero();
+  Serial.print("[CALIBRATION] Your Current RZero is: ");
+  Serial.println(rzero);
+  Serial.println("[CALIBRATION] If this value is very different from 76.63, update your code or library.");
 }
-
-
 
 void loop() {
-
-// 5. MAIN LOOP
-
-// Reconnect to WiFi if the connection is lost
-
-if (WiFi.status() != WL_CONNECTED) {
-
-connectToWiFi();
-
-}
-
-
-
-// Use millis() for non-blocking delay
-
-if (millis() - lastUploadTime > UPLOAD_INTERVAL) {
-
-// -- Read Sensor Data
-
-float humidity = dht.readHumidity();
-
-float temperature = dht.readTemperature(); // in Celsius
-
-
-
-// Check if sensor readings are valid (will be NaN if read fails)
-
-if (isnan(humidity) || isnan(temperature)) {
-
-Serial.println("Failed to read from DHT sensor!");
-
-return; // Skip this loop iteration if readings are invalid
-
-}
-
-
-// -- Process MQ135 Data with Correction
-
-// The library uses its internal functions to calculate the corrected PPM
-
-// based on the temperature and humidity values you pass to it.
-
-float ppm = gasSensor.getCorrectedPPM(temperature, humidity);
-
-
-
-Serial.println("--------------------");
-
-Serial.print("Temperature: "); Serial.print(temperature); Serial.println(" *C");
-
-Serial.print("Humidity: "); Serial.print(humidity); Serial.println(" %");
-
-Serial.print("Air Quality (Corrected CO2 PPM): "); Serial.println(ppm);
-
-
-
-// -- Upload Data to ThingSpeak
-
-ThingSpeak.setField(1, temperature);
-
-ThingSpeak.setField(2, humidity);
-
-ThingSpeak.setField(3, ppm);
-
-
-
-// ** FIX: Use the constants defined at the top of the code. **
-
-// This ensures the API key is correctly treated as a string.
-
-int httpCode = ThingSpeak.writeFields(CHANNEL_ID, WRITE_API_KEY);
-
-
-if (httpCode == 200) {
-
-Serial.println("Channel update successful.");
-
-} else {
-
-Serial.println("Problem updating channel. HTTP error code " + String(httpCode));
-
-}
-
-
-
-lastUploadTime = millis(); // Update the last upload time
-
-}
-
-}
-
-
-
-// Helper function to connect to WiFi
-
-void connectToWiFi() {
-
-Serial.print("Attempting to connect to SSID: ");
-
-Serial.println(WIFI_SSID);
-
-WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-
-
-int retries = 0;
-
-while (WiFi.status() != WL_CONNECTED && retries < 20) {
-
-delay(500);
-
-Serial.print(".");
-
-retries++;
-
-}
-
-
-
-if (WiFi.status() == WL_CONNECTED) {
-
-Serial.println("\nWiFi connected!");
-
-Serial.print("IP address: ");
-
-Serial.println(WiFi.localIP());
-
-} else {
-
-Serial.println("\nFailed to connect to WiFi. Will retry.");
-
-}
-
+  // Check if 30 seconds have passed
+  if (millis() - lastUploadTime > UPLOAD_INTERVAL) {
+    
+    // 1. Check WiFi Connection
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("[Error] WiFi lost. Reconnecting...");
+      WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+      return; 
+    }
+
+    // 2. Read Sensors
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    
+    // Calculate PPM
+    // Note: If you didn't edit the library file with the RZero found in setup, this will still be offset.
+    float ppm = gasSensor.getCorrectedPPM(t, h);
+
+    if (isnan(h) || isnan(t)) {
+      Serial.println("[Error] Failed to read from DHT sensor!");
+      return;
+    }
+
+    // 3. Debug Print
+    Serial.println("\n--------------------");
+    Serial.print("Temp: "); Serial.print(t); Serial.println(" C");
+    Serial.print("Hum:  "); Serial.print(h); Serial.println(" %");
+    Serial.print("CO2:  "); Serial.print(ppm); Serial.println(" PPM");
+    Serial.println("--------------------");
+
+    // 4. Upload to ThingSpeak
+    ThingSpeak.setField(1, t);
+    ThingSpeak.setField(2, h);
+    ThingSpeak.setField(3, ppm);
+
+    int httpCode = ThingSpeak.writeFields(CHANNEL_ID, WRITE_API_KEY);
+
+    if (httpCode == 200) {
+      Serial.println("[Success] ThingSpeak update successful.");
+    } else {
+      Serial.print("[Error] ThingSpeak Update Failed. HTTP Error Code: ");
+      Serial.println(httpCode);
+      
+      // Error Code Explanations
+      if (httpCode == 401) Serial.println(" -> REASON: Wrong API Key (Check spelling/length)");
+      if (httpCode == -301) Serial.println(" -> REASON: Connection Failed");
+      if (httpCode == -304) Serial.println(" -> REASON: Timeout");
+      if (httpCode == 0) Serial.println(" -> REASON: Generic Error (Check WiFi/Library)");
+    }
+    
+    lastUploadTime = millis();
+  }
 }
